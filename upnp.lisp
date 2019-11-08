@@ -101,7 +101,7 @@ TIMEOUT ::= milliseconds to wait for responses. Default is 5000ms.
 SSDP ::= structure returned from DISCOVER.
 "
   (let* ((location (getf ssdp :location))
-	 (nodes (xmls:parse (http-request location)))
+	 (nodes (xmls:parse-to-list (http-request location)))
 	 (ret nil))
     (dolist (node (cddr nodes))
       (let ((nname (car (first node)))
@@ -147,7 +147,7 @@ Returns (values service-actions state-variables).
 
 SERVICE-INFO ::= structure returned from GET-SERVICE-LIST.
 "
-  (let ((nodes (xmls:parse
+  (let ((nodes (xmls:parse-to-list
 		(http-request
 		 (upnp-url (getf service-info :location) (getf service-info :scpd-url)))))
 	(state-variables nil)
@@ -213,7 +213,7 @@ SERVICE-INFO ::= structure returned from GET-SERVICE-LIST.
 		 (format stream ": ~A" d))))))
 
 (defun parse-action-response (xml)
-  (let ((nodes (xmls:parse xml)))
+  (let ((nodes (xmls:parse-to-list xml)))
     (dolist (node (cddr nodes))
       (when (string-equal (car (first node)) "Body")
 	(cond
